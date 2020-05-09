@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "harunbu-dev"
+  },
+  "targets": {
+    "harunbu-dev": {
+      "hosting": {
+        "tutorial": [
+          "harunbu-dev-react-tutorial"
+        ]
+      }
+    }
+  }
+}
