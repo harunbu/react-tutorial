@@ -14,6 +14,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -27,7 +28,7 @@ class Board extends React.Component {
       for (let col = 0; col < 3; col ++) {
         boardRow.push(this.renderSquare(row * 3 + col));
       }
-      board.push(<div className="board-row">{boardRow}</div>);
+      board.push(<div key={row} className="board-row">{boardRow}</div>);
     }
     return board;
   }
@@ -43,7 +44,9 @@ class Game extends React.Component {
           col: null,
           row: null,
         },
+        move: 0,
       }],
+      historyOrderIsAsc: true,
       stepNumber: 0,
       xIsNext: true,
     };
@@ -64,7 +67,9 @@ class Game extends React.Component {
           col: i % 3,
           row: Math.floor(i / 3),
         },
+        move: history.length,
       }]),
+      historyOrderIsAsc: true,
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
@@ -77,19 +82,29 @@ class Game extends React.Component {
     });
   }
 
+  reverseMove() {
+    this.setState({
+      historyOrderIsAsc: ! this.state.historyOrderIsAsc,
+    });
+  }
+
   render() {
-    const history = this.state.history;
+    const history = this.state.history.slice();
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
+    if (this.state.historyOrderIsAsc) {
+      history.reverse();
+    }
+
     const moves = history.map((step, move) => {
-      const desc = move ?
-        'Go to move #' + move + '(' + step.point.col + ', ' + step.point.row + ')':
+      const desc = step.move ?
+        'Go to move #' + step.move + '(' + step.point.col + ', ' + step.point.row + ')':
         'Go to game start';
-      const strongText = (move === this.state.stepNumber) ? <b>{desc}</b> : desc;
+      const strongText = (step.move === this.state.stepNumber) ? <b>{desc}</b> : desc;
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>
+        <li key={step.move}>
+          <button onClick={() => this.jumpTo(step.move)}>
             {strongText}
           </button>
         </li>
@@ -112,6 +127,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button onClick={() => this.reverseMove()}>reverse</button>
           <ol>{moves}</ol>
         </div>
       </div>
