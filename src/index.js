@@ -93,7 +93,7 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    if (this.state.historyOrderIsAsc) {
+    if (! this.state.historyOrderIsAsc) {
       history.reverse();
     }
 
